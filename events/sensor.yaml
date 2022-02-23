@@ -36,9 +36,9 @@ spec:
           operation: create
           source:
             git:
-              url: "git@github.com:argoproj/argo-workflows.git"
-              cloneDirectory: "/git/argoproj"
+              url: "git@github.com:abhi1-rithu2/argo-fulltask.git"
+              cloneDirectory: "/git/nodejs-welcome"
               sshKeyPath: "/secret/key"
               namespace: argo-events
-              filePath: "examples/hello-world.yaml"
-              branch: "master"
+              filePath: "workflows/workflow.yaml"
+              branch: "main"
