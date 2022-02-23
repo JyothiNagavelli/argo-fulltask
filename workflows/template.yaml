@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ClusterWorkflowTemplate
+metadata:
+  name: container-image
+spec:
+  templates:
+    - name: build-kaniko-git
+      inputs:
+        parameters:
+          - name: app-repo
+          - name: container-image
+          - name: container-tag
+      container:
+       image: gcr.io/kaniko-project/executor:debug
+       command: [/kaniko/executor]
+       args:
+        - --context={{inputs.parameters.app-repo}}
+        - --destination={{inputs.parameters.container-image}}:{{inputs.parameters.container-tag}}
+        - --force
+       volumeMounts:
+        - name: kaniko-secret
+          mountPath: /kaniko/.docker/
