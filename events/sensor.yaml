@@ -1,44 +1,74 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Sensor
 metadata:
-  name: webhook
+  name: github
 spec:
   template:
-    container:
-      volumeMounts:
-        - mountPath: /git/nodejs-welcome
-          name: nodejs
-        - mountPath: /secret
-          name: sshkey
-        - mountPath: /etc/ssh
-          name: known-hosts
-    volumes:
-      - name: nodejs
-        emptyDir: {}
-      - name: sshkey
-        secret:
-          secretName: git-ssh
-      # The name of the key in the secret must be "ssh_known_hosts"
-      # Make sure you have your git provider added in the known hosts
-      # e.g. create the secret by running, kubectl -n argo-events create secret generic git-known-hosts --from-file=ssh_known_hosts=.ssh/known_hosts
-      - name: known-hosts
-        secret:
-          secretName: git-known-hosts
     serviceAccountName: operate-workflow-sa
   dependencies:
     - name: test-dep
-      eventSourceName: webhook
+      eventSourceName: github
       eventName: example
+      filters:
+        data:
+          # Name of the event that triggered the delivery: [pull_request, push, yadayadayada]
+          # https://docs.github.com/en/developers/webhooks-and-events/webhook-events-and-payloads
+          - path: body.X-GitHub-Event
+            type: string
+            value:
+              - pull_request
+          - path: body.action
+            type: string
+            value:
+              - opened
+              - edited
+              - reopened
+              - synchronize
+          - path: body.pull_request.state
+            type: string
+            value:
+              - open
+          - path: body.pull_request.base.ref
+            type: string
+            value:
+              - main
   triggers:
     - template:
-        name: workflow-trigger
+        name: github-workflow-trigger
         k8s:
           operation: create
           source:
-            git:
-              url: "git@github.com:abhi1-rithu2/argo-fulltask.git"
-              cloneDirectory: "/git/nodejs-welcome"
-              sshKeyPath: "/secret/key"
-              namespace: argo-events
-              filePath: "workflows/workflow.yaml"
-              branch: "main"
+            resource:
+              apiVersion: argoproj.io/v1alpha1
+              kind: Workflow
+              metadata:
+                generateName: nodejs-welcome
+                labels:
+                  workflows.argoproj.io/archive-strategy: "false"
+              spec:
+                entrypoint: build
+                serviceAccountName: argo
+                volumes:
+                  - name: kaniko-secret
+                    secret:
+                      secretName: docker
+                      items:
+                        - key: .dockerconfigjson
+                          path: config.json
+                templates:
+                  - name: hello
+                    dag:
+                      tasks:
+                        - name: build-container-image
+                          templateRef:
+                            name: container-image
+                            template: build-kaniko-git
+                            clusterScope: true
+                          arguments:
+                             parameters:
+                               - name: app_repo
+                                 value: git://github.com/abhi1-rithu2/nodejs-welcome.git
+                               - name: container_image
+                                 value: rithu1320/nodejs-jyothi
+                               - name: container_tag
+                                 value: "1.2.0"
