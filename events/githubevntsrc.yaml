@@ -22,7 +22,7 @@ spec:
         # This url must be reachable from outside the cluster.
         # The name for the service is in `<event-source-name>-eventsource-svc` format.
         # You will need to create an Ingress or Openshift Route for the event-source service so that it can be reached from GitHub.
-        url:  https://c983-183-82-115-199.ngrok.io
+        url:  https://fad9-183-82-115-199.ngrok.io
       events:
         - "*"
       apiToken:
