@@ -69,6 +69,6 @@ spec:
                                - name: app_repo
                                  value: git://github.com/abhi1-rithu2/nodejs-welcome.git
                                - name: container_image
-                                 value: rithu1320/nodejs
+                                 value: rithu1320/nodejs-jyo
                                - name: container_tag
-                                 value: "1.1.0"
+                                 value: "1.3.0"
