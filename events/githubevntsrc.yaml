@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: EventSource
+metadata:
+  name: github
+spec:
+  service:
+    ports:
+      - name: example
+        port: 12000
+        targetPort: 12000
+  github:
+    example:
+      repositories:
+        - owner: abhi1-rithu2
+          names:
+            - argo-fulltask
+      webhook:
+        endpoint: /nodejs-welcome
+        port: "12000"
+        method: POST
+        # url the event-source will use to register at Github.
+        # This url must be reachable from outside the cluster.
+        # The name for the service is in `<event-source-name>-eventsource-svc` format.
+        # You will need to create an Ingress or Openshift Route for the event-source service so that it can be reached from GitHub.
+        url:  https://c983-183-82-115-199.ngrok.io
+      events:
+        - "*"
+      apiToken:
+        name: github-access
+        key: token
+      insecure: true
+      active: true
+      contentType: json
