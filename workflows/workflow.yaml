@@ -30,4 +30,4 @@ spec:
                  - name: container-image
                    value: rithu1320/nodejs-jyothi
                  - name: container-tag
-                   value: "1.2.0"
+                   value: "1.3.0"
