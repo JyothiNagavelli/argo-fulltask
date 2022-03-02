@@ -1,10 +1,18 @@
-apiVersion: argoproj.io/v1alpha1
-kind: Workflow
-metadata:
+name: build
+env:
+  REPO_OWNER: abhi1-rithu2
+  REPO_NAME: argo-fulltask
+  GITHUB_TOKEN: ${{ github-access }}
+on:
+  repository_dispatch:
+    types: [build-container-image]
+ apiVersion: argoproj.io/v1alpha1
+ kind: Workflow
+ metadata:
   generateName: nodejs-jyothi
   labels:
     workflows.argoproj.io/archive-strategy: "false"
-spec:
+ spec:
   entrypoint: hello
   serviceAccountName: argo
   volumes:
