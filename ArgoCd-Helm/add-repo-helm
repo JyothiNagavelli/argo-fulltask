@@ -10,3 +10,6 @@ argocd repo add https://<git repo url> --username <> --password <>
 
 # To add git Repo 
 argocd repo add https://<helm repo url>
+# ref Argocd
+
+https://github.com/argoproj/argo-cd
