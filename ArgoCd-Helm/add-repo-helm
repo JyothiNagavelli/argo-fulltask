@@ -1,0 +1,12 @@
+#repo installation
+helm repo add argo https://argoproj.github.io/argo-helm
+helm install argo-cd argo/argo-cd --values values-argocd.yaml -n argocd
+
+# To Add the cluster 
+argocd cluster add default --name=prod --kubeconfig ~/kubeconfig/path
+
+# To add git Repo 
+argocd repo add https://<git repo url> --username <> --password <>
+
+# To add git Repo 
+argocd repo add https://<helm repo url>
